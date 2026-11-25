@@ -480,3 +480,22 @@ p .btn + .btn { margin-left: 6px; }
 .mask:hover { transform: translateY(-5px); border-color: #e0b24a; box-shadow: inset 0 0 0 3px #140a05, inset 0 0 0 4px #b8860b, 0 10px 22px #000b, 0 0 20px #e0a33a66; }
 .mask:hover svg { transform: scale(1.14) rotate(-4deg); }
 .mask:active { transform: translateY(0) scale(.97); }
+
+/* Pause screen: centre the item grid */
+.pl { grid-template-columns: 104px 1fr 104px; }
+.pl-main { align-items: center; }
+.pl-top { width: 100%; }
+.pl-title { margin-top: auto; }
+.pl-grid { width: min(94%, 560px); margin: 0 auto; }
+.pl-map { margin: 12px 0 auto; }
+.pl-rup { left: 16px; }
+.pl-side { justify-content: center; }
+.pl-side.r { padding: 14px 8px; }
+.pl-page { height: 78%; }
+@media (max-width: 640px) { .pl { grid-template-columns: 0 1fr 0; } }
+.pl-bar { position: static; width: 100%; margin-top: 2px; flex: none; }
+.pl-title { margin-top: auto; margin-bottom: 8px; }
+.pl { aspect-ratio: auto; min-height: 540px; }
+.pl-top { flex-wrap: nowrap; justify-content: space-between; align-items: center; }
+.pl-hearts { width: 250px; flex: none; }
+.pl-btns { flex: none; }

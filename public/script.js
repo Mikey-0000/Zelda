@@ -619,8 +619,8 @@
     function draw() {
       const hearts = 10;
       host.innerHTML = `<div class="pl"><div class="pl-side l"><div class="eq">${ICONS.mastersword}</div><div class="eq">${ICONS.mirror}</div><div class="eq">${ICONS.tunic}</div><div class="eq">${ICONS.boots}</div></div>
-        <div class="pl-main"><div class="pl-top"><div class="pl-hearts">${Array.from({ length: hearts }, () => `<span>${heartSvg(1)}</span>`).join('')}</div><div class="pl-bar"></div><div class="pl-btns"><b class="r">Return</b><b class="g">Save</b><b class="d">Decide</b></div></div>
-        <div class="pl-title">SELECT ITEM</div>
+        <div class="pl-main"><div class="pl-top"><div class="pl-hearts">${Array.from({ length: hearts }, () => `<span>${heartSvg(1)}</span>`).join('')}</div><div class="pl-btns"><b class="r">Return</b><b class="g">Save</b><b class="d">Decide</b></div></div>
+        <div class="pl-bar"></div><div class="pl-title">SELECT ITEM</div>
         <div class="pl-grid">${cells.map(c => `<div class="pl-slot ${c.id === sel ? 'sel' : ''}" data-id="${c.id}" title="${c.name}">${ico(c.icon)}${c.cost && !c.own ? `<i>${c.cost}</i>` : ''}</div>`).join('')}</div>
         <div class="pl-map">To Map</div><div class="pl-rup"><span class="gem"></span>500</div></div>
         <div class="pl-side r"><div class="pl-page"><b>Map</b><span></span><span></span><span></span><span></span></div></div></div>`;
