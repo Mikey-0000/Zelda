@@ -579,6 +579,25 @@
     setInterval(() => { if (awake && !cursed && Math.random() < .5) leafShower(1); }, 2500);
   })();
 
+
+  /* ================= LIVE PAUSE SCREEN (crisp, no screenshot) ================= */
+  (function () {
+    const host = $('#pause-live'); if (!host) return;
+    const cells = ITEMS.filter(i => i.id !== 'dekustick').concat([{ id: 'x1', icon: '🧿', name: 'Ocarina of Time', desc: 'The treasured ocarina entrusted to Link by Zelda.', own: true }, { id: 'x2', icon: '📜', name: 'Letter', desc: 'A folded message waiting to be delivered.', own: true }, { id: 'x3', icon: '💍', name: 'Ring', desc: 'A keepsake from a distant corner of Hyrule.', own: true }]);
+    let sel = 'fairyocarina';
+    function draw() {
+      const hearts = 10;
+      host.innerHTML = `<div class="pl"><div class="pl-side l"><div class="eq">🗡️</div><div class="eq">🛡️</div><div class="eq">👕</div><div class="eq">🥾</div></div>
+        <div class="pl-main"><div class="pl-top"><div class="pl-hearts">${Array.from({ length: hearts }, () => `<span>${heartSvg(1)}</span>`).join('')}</div><div class="pl-bar"></div><div class="pl-btns"><b class="r">Return</b><b class="g">Save</b><b class="d">Decide</b></div></div>
+        <div class="pl-title">SELECT ITEM</div>
+        <div class="pl-grid">${cells.map(c => `<div class="pl-slot ${c.id === sel ? 'sel' : ''}" data-id="${c.id}" title="${c.name}">${c.icon}${c.cost && !c.own ? `<i>${c.cost}</i>` : ''}</div>`).join('')}</div>
+        <div class="pl-map">To Map</div><div class="pl-rup"><span class="gem"></span>500</div></div>
+        <div class="pl-side r"><div class="pl-page"><b>Map</b><span></span><span></span><span></span><span></span></div></div></div>`;
+      $$('.pl-slot', host).forEach(e => e.onclick = () => { sel = e.dataset.id; const c = cells.find(x => x.id === sel); sfx.open(); draw(); say(c.desc, c.name); });
+    }
+    draw();
+  })();
+
   /* ================= TRIVIA ================= */
   const TRIVIA = [
     { q: 'Which fairy guides Link in Ocarina of Time?', a: ['Navi', 'Tatl', 'Fi', 'Midna'], c: 0 },
