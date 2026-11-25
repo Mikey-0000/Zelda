@@ -246,13 +246,15 @@
       <div class="detail"><div class="ic">${it.icon}</div><h4>${it.name}</h4><p>${it.desc}</p>${own ? '<p style="color:#7dff8f">✔ In your inventory</p>' : `<button class="btn" id="iB" ${save.rupees < it.cost ? 'disabled' : ''}>Buy — ${it.cost} rupees</button><p style="font-size:.85rem;color:#9ab">Earn rupees by cutting grass along the bottom of any page.</p>`}</div></div>
       <div class="quest">${STONES.map(s => `<div class="qi ${save.stones.includes(s.id) ? 'got' : ''}"><div class="g">${s.icon}</div>${s.name}<br><span style="color:#9ab">${save.stones.includes(s.id) ? 'Collected' : s.how}</span></div>`).join('')}</div>
       <div class="songs">Songs played: ${save.songs.length}/${SONGS.length} · Pages visited: ${save.pages.length} · Grass cut: ${save.cuts}</div>
-      <div class="bar"><button class="btn" id="iM">To Map</button> <span style="margin-left:10px"><span class="gem" style="display:inline-block;width:12px;height:18px;background:#2fcf50;clip-path:polygon(50% 0,100% 30%,100% 70%,50% 100%,0 70%,0 30%);vertical-align:-3px"></span> ${save.rupees}</span></div>
+      <div class="bar"><button class="btn" id="iM">To Map</button> <button class="btn" id="iX">Export</button> <button class="btn" id="iI">Import</button> <span style="margin-left:10px"><span class="gem" style="display:inline-block;width:12px;height:18px;background:#2fcf50;clip-path:polygon(50% 0,100% 30%,100% 70%,50% 100%,0 70%,0 30%);vertical-align:-3px"></span> ${save.rupees}</span></div>
     </div>`;
     drawHearts($('#invh', inv));
     $$('.slot', inv).forEach(s => { s.onclick = () => { invSel = s.dataset.id; sfx.open(); renderInv(); }; });
     $('#iR', inv).onclick = closeInv;
     $('#iS', inv).onclick = () => { persist(); toast('Game saved.'); sfx.heart(); };
     $('#iM', inv).onclick = () => { closeInv(); say('Hyrule is bigger than this page! Try the menu at the top of the screen.', 'Navi'); };
+    $('#iX', inv).onclick = () => { const code = btoa(JSON.stringify(save)); try { navigator.clipboard.writeText(code); toast('Save code copied!'); } catch (e) { prompt('Your save code:', code); } };
+    $('#iI', inv).onclick = () => { const c = prompt('Paste a save code:'); if (!c) return; try { Object.assign(save, JSON.parse(atob(c.trim()))); persist(); drawHUD(); toast('Save loaded!'); sfx.item(); } catch (e) { sfx.bad(); toast('That code is not valid.'); } };
     const b = $('#iB', inv);
     if (b) b.onclick = () => {
       if (save.rupees < it.cost) return sfx.bad();
@@ -554,6 +556,15 @@
   $$('.mask').forEach(m => m.onclick = () => { sfx.open(); spark(m.getBoundingClientRect().left + 20, m.getBoundingClientRect().top + 20, '#e0a33a', 14, 4); say(m.dataset.text.split('|'), m.dataset.name); });
   $$('[data-howl]').forEach(b => b.onclick = () => { [220, 330, 392, 330].forEach((f, i) => tone(f, .5, 'sawtooth', .06, i * .3)); toast('Awooo!'); });
   $$('[data-dive]').forEach(b => b.onclick = e => { for (let i = 0; i < 40; i++) setTimeout(() => parts.push({ x: rand(0, innerWidth), y: -10, vx: rand(-1, 1), vy: rand(6, 12), life: 100, max: 100, c: '#fff', r: rand(2, 6), g: 0 }), i * 20); toast('Diving from Skyloft!'); });
+
+  /* page-turn transition */
+  document.addEventListener('click', e => {
+    const a = e.target.closest && e.target.closest('a[href$=".html"]');
+    if (!a || e.ctrlKey || e.metaKey || e.shiftKey || a.target) return;
+    e.preventDefault(); document.body.classList.add('leaving'); tone(330, .25, 'triangle', .05); noise(.25, .06);
+    setTimeout(() => { location.href = a.href; }, 450);
+  });
+  addEventListener('pageshow', () => document.body.classList.remove('leaving'));
 
   addEventListener('pointerdown', () => ac(), { once: true });
   drawHUD(); parallax(); checkStones();
