@@ -195,10 +195,41 @@
   }
   dlg.addEventListener('click', () => { if (dBusy) { finishLine(); } else if (!dChoices || dq.length) nextLine(); });
 
+
+  /* ================= CUSTOM SVG ICONS ================= */
+  const W = (b) => `<svg viewBox="0 0 48 48" class="ico">${b}</svg>`;
+  const ICONS = {
+    sword: W('<path d="M24 3 L28 8 L28 30 L20 30 L20 8Z" fill="#cfd8e6" stroke="#2a3446" stroke-width="2"/><path d="M24 5 V29" stroke="#fff" stroke-width="1.5"/><rect x="12" y="30" width="24" height="5" rx="2" fill="#7a4a1a" stroke="#2a1708" stroke-width="2"/><rect x="21" y="35" width="6" height="9" fill="#2f7a30" stroke="#13300f" stroke-width="2"/><circle cx="24" cy="46" r="2" fill="#ffd24a"/>'),
+    dekustick: W('<path d="M14 42 L30 8 L35 11 L20 45Z" fill="#8a5a2a" stroke="#2a1708" stroke-width="2"/><path d="M30 8 L35 11" stroke="#ffb84a" stroke-width="3"/><path d="M18 34 L22 36" stroke="#4a2a0a" stroke-width="2"/>'),
+    shield: W('<path d="M24 4 L40 10 V24 C40 34 32 41 24 45 C16 41 8 34 8 24 V10Z" fill="#8a5a2a" stroke="#2a1708" stroke-width="2.5"/><path d="M24 8 V42 M10 20 H38" stroke="#5a3a18" stroke-width="2"/><circle cx="24" cy="22" r="5" fill="#d33a2a" stroke="#2a1708" stroke-width="2"/>'),
+    fairyocarina: W('<path d="M6 28 C8 16 20 12 30 16 C40 20 44 30 36 36 C28 42 12 40 6 28Z" fill="#4a8ad8" stroke="#10284a" stroke-width="2.5"/><circle cx="16" cy="26" r="2" fill="#10284a"/><circle cx="23" cy="24" r="2" fill="#10284a"/><circle cx="30" cy="25" r="2" fill="#10284a"/><circle cx="26" cy="31" r="2" fill="#10284a"/><path d="M30 16 L38 8" stroke="#10284a" stroke-width="3" stroke-linecap="round"/>'),
+    slingshot: W('<path d="M24 44 V26 M24 26 L12 8 M24 26 L36 8" stroke="#7a4a1a" stroke-width="5" stroke-linecap="round" fill="none"/><path d="M12 8 Q24 20 36 8" stroke="#d8c08a" stroke-width="2" fill="none"/><circle cx="24" cy="19" r="3" fill="#6ac84a" stroke="#13300f"/>'),
+    bombs: W('<circle cx="22" cy="28" r="14" fill="#1c1c24" stroke="#000" stroke-width="2.5"/><path d="M14 22 Q16 17 21 17" stroke="#8a93a8" stroke-width="2.5" fill="none"/><rect x="18" y="10" width="8" height="6" fill="#6a6a78" stroke="#000" stroke-width="2"/><path d="M26 11 Q34 5 38 9" stroke="#d8b080" stroke-width="2.5" fill="none"/><circle cx="39" cy="9" r="3" fill="#ffb02e"/>'),
+    bow: W('<path d="M14 4 C40 14 40 34 14 44" stroke="#7a4a1a" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M14 4 L14 44" stroke="#e8e0c8" stroke-width="1.5"/><path d="M8 24 H40" stroke="#c8c8d0" stroke-width="2.5"/><path d="M40 24 L33 20 V28Z" fill="#cfd8e6" stroke="#2a3446"/><path d="M8 24 L12 20 M8 24 L12 28" stroke="#d33a2a" stroke-width="2.5"/>'),
+    boomerang: W('<path d="M8 12 C28 4 44 16 40 40 C34 28 24 22 8 24 Z" fill="#c8a24a" stroke="#4a3208" stroke-width="2.5"/><path d="M12 16 C24 12 34 18 36 30" stroke="#fff8" stroke-width="1.5" fill="none"/>'),
+    hookshot: W('<rect x="4" y="30" width="22" height="9" rx="3" fill="#5a6a8a" stroke="#1a2438" stroke-width="2"/><rect x="26" y="33" width="14" height="3" fill="#8a93a8"/><path d="M40 34 L46 28 M40 34 L46 40 M40 34 H47" stroke="#cfd8e6" stroke-width="3" stroke-linecap="round"/><rect x="10" y="39" width="7" height="7" fill="#7a4a1a" stroke="#2a1708" stroke-width="2"/>'),
+    lens: W('<circle cx="20" cy="20" r="14" fill="#d8e8c8" fill-opacity=".6" stroke="#2a5a2a" stroke-width="3"/><circle cx="20" cy="20" r="9" fill="#b0d8ff" fill-opacity=".5" stroke="#2a5a2a" stroke-width="1.5"/><ellipse cx="20" cy="20" rx="5" ry="3" fill="#fff" stroke="#2a5a2a"/><circle cx="20" cy="20" r="1.5" fill="#000"/><path d="M30 30 L44 44" stroke="#7a4a1a" stroke-width="5" stroke-linecap="round"/>'),
+    bottle: W('<path d="M19 4 H29 V12 L36 22 V40 Q36 45 31 45 H17 Q12 45 12 40 V22 L19 12Z" fill="#9dc3fc" fill-opacity=".55" stroke="#1a2a4a" stroke-width="2.5"/><path d="M13 30 H35 V40 Q35 44 31 44 H17 Q13 44 13 40Z" fill="#5a3fd8"/><rect x="18" y="2" width="12" height="5" rx="1" fill="#7a4a1a" stroke="#2a1708" stroke-width="1.5"/>'),
+    hammer: W('<rect x="21" y="16" width="6" height="30" rx="2" fill="#7a4a1a" stroke="#2a1708" stroke-width="2"/><rect x="6" y="4" width="36" height="16" rx="3" fill="#8a93a8" stroke="#1a2030" stroke-width="2.5"/><rect x="6" y="9" width="36" height="4" fill="#cfd8e6" opacity=".6"/>'),
+    hover: W('<path d="M10 8 H26 L28 30 L44 36 V44 H8Z" fill="#6a4a8a" stroke="#1e1030" stroke-width="2.5"/><path d="M8 40 H44" stroke="#ffd24a" stroke-width="3"/><path d="M14 46 Q24 50 34 46" stroke="#9dc3fc" stroke-width="2.5" fill="none"/>'),
+    mirror: W('<path d="M24 3 L42 12 V26 C42 36 34 42 24 46 C14 42 6 36 6 26 V12Z" fill="#cfd8e6" stroke="#4a3208" stroke-width="3"/><path d="M24 8 L36 14 V26 C36 33 31 38 24 41Z" fill="#fff" opacity=".6"/><path d="M24 14 L28 24 H20Z M20 24 H28 L24 34Z" fill="#c8a24a" stroke="#4a3208"/>'),
+    mastersword: W('<path d="M24 1 L29 8 L29 30 L19 30 L19 8Z" fill="#e0e8f4" stroke="#2a3446" stroke-width="2"/><path d="M24 3 V29" stroke="#9dc3fc" stroke-width="2"/><path d="M8 30 Q24 24 40 30 L38 36 H10Z" fill="#3a3a9a" stroke="#101040" stroke-width="2"/><circle cx="24" cy="32" r="3" fill="#ffd24a" stroke="#4a3208"/><rect x="21" y="36" width="6" height="8" fill="#3a3a9a" stroke="#101040" stroke-width="2"/>'),
+    triforce: W('<g fill="#f4c542" stroke="#7a5a05" stroke-width="2"><path d="M24 4 L34 22 H14Z"/><path d="M14 24 L24 42 H4Z"/><path d="M34 24 L44 42 H24Z"/></g>'),
+    ocarinaoftime: W('<path d="M4 30 C6 16 22 10 34 16 C46 22 46 34 36 38 C26 44 8 42 4 30Z" fill="#2a50b8" stroke="#0a1a4a" stroke-width="2.5"/><path d="M12 22 C20 16 30 18 36 24" stroke="#9dc3fc" stroke-width="2" fill="none"/><circle cx="16" cy="30" r="2.2" fill="#0a1a4a"/><circle cx="23" cy="30" r="2.2" fill="#0a1a4a"/><circle cx="30" cy="31" r="2.2" fill="#0a1a4a"/><path d="M36 16 L42 8" stroke="#0a1a4a" stroke-width="4" stroke-linecap="round"/><path d="M26 22 L29 17 H23Z" fill="#f4c542"/>'),
+    letter: W('<rect x="5" y="10" width="38" height="28" rx="2" fill="#e8d5a0" stroke="#5a3f1a" stroke-width="2.5"/><path d="M5 12 L24 28 L43 12" stroke="#5a3f1a" stroke-width="2.5" fill="none"/><circle cx="24" cy="28" r="4" fill="#9a2a22"/>'),
+    ring: W('<circle cx="24" cy="30" r="11" fill="none" stroke="#e0b24a" stroke-width="5"/><path d="M18 14 L24 6 L30 14 L24 20Z" fill="#6ac8ff" stroke="#1a4a7a" stroke-width="2"/>'),
+    tunic: W('<path d="M14 6 L4 14 L10 22 L14 18 V44 H34 V18 L38 22 L44 14 L34 6 L28 10 H20Z" fill="#2f7a30" stroke="#13300f" stroke-width="2.5"/><rect x="14" y="32" width="20" height="4" fill="#7a4a1a" stroke="#2a1708" stroke-width="1.5"/>'),
+    boots: W('<path d="M14 4 H28 V28 L42 34 V44 H10 V30 Z" fill="#7a4a1a" stroke="#2a1708" stroke-width="2.5"/><path d="M10 40 H42" stroke="#2a1708" stroke-width="3"/><rect x="13" y="8" width="14" height="4" fill="#b88a4a"/>')
+  };
+  const BY_EMOJI = {}; const eid = { '🗡️': 'sword', '🪵': 'dekustick', '🛡️': 'shield', '🎵': 'fairyocarina', '🎯': 'slingshot', '💣': 'bombs', '🏹': 'bow', '🪃': 'boomerang', '🪝': 'hookshot', '🔍': 'lens', '🧪': 'bottle', '🔨': 'hammer', '🥾': 'hover', '🪞': 'mirror', '⚔️': 'mastersword', '🔺': 'triforce', '🧿': 'ocarinaoftime', '📜': 'letter', '💍': 'ring', '👕': 'tunic' };
+  Object.keys(eid).forEach(k => BY_EMOJI[k] = ICONS[eid[k]]);
+  BY_EMOJI['🟢'] = W('<circle cx="24" cy="24" r="18" fill="#1f8a3a" stroke="#2a1a05" stroke-width="3"/><circle cx="24" cy="24" r="13" fill="#4cd86a" stroke="#fff6" stroke-width="1.5"/><path d="M15 16 Q20 11 27 12" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/>'); BY_EMOJI['🔴'] = W('<circle cx="24" cy="24" r="18" fill="#9a1f1a" stroke="#2a1a05" stroke-width="3"/><circle cx="24" cy="24" r="13" fill="#ff5a4a" stroke="#fff6" stroke-width="1.5"/><path d="M15 16 Q20 11 27 12" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/>'); BY_EMOJI['🔵'] = W('<circle cx="24" cy="24" r="18" fill="#1a4a9a" stroke="#2a1a05" stroke-width="3"/><circle cx="24" cy="24" r="13" fill="#4a8aff" stroke="#fff6" stroke-width="1.5"/><path d="M15 16 Q20 11 27 12" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/>');
+  const ico = e => BY_EMOJI[e] || e;
+
   /* ================= ITEM GET ================= */
   const ig = el('div', null, '<div class="inner"><div class="big"></div><h3></h3><p></p><div style="opacity:.7;font-size:.8rem">Click to continue</div></div>', document.body); ig.id = 'itemget';
   function itemGet(icon, name, desc, after) {
-    $('.big', ig).textContent = icon; $('h3', ig).textContent = 'You got ' + name + '!'; $('p', ig).textContent = desc;
+    $('.big', ig).innerHTML = ico(icon); $('h3', ig).textContent = 'You got ' + name + '!'; $('p', ig).textContent = desc;
     ig.classList.add('on'); sfx.item(); spark(innerWidth / 2, innerHeight / 2, '#ffe45a', 60, 8, 60);
     ig.onclick = () => { ig.classList.remove('on'); after && after(); };
   }
@@ -243,9 +274,9 @@
     inv.innerHTML = `<div class="frame">
       <div class="top"><div class="hearts" id="invh"></div><div><button class="btn" id="iR">Return</button> <button class="btn" id="iS">Save</button></div></div>
       <h3>SELECT ITEM</h3>
-      <div class="body"><div class="grid">${ITEMS.map(i => `<div class="slot ${save.items.includes(i.id) ? '' : 'locked'} ${i.id === invSel ? 'sel' : ''}" data-id="${i.id}" title="${i.name}">${i.icon}${save.items.includes(i.id) ? '' : (i.reward ? '' : `<span class="cost">${i.cost}</span>`)}</div>`).join('')}</div>
-      <div class="detail"><div class="ic">${it.icon}</div><h4>${it.name}</h4><p>${it.desc}</p>${own ? '<p style="color:#7dff8f">✔ In your inventory</p>' : it.reward ? '<p style="color:#9ab">Reward: chat with the Great Deku Tree on the home page.</p>' : `<button class="btn" id="iB" ${save.rupees < it.cost ? 'disabled' : ''}>Buy — ${it.cost} rupees</button><p style="font-size:.85rem;color:#9ab">Earn rupees by cutting grass along the bottom of any page.</p>`}</div></div>
-      <div class="quest">${STONES.map(s => `<div class="qi ${save.stones.includes(s.id) ? 'got' : ''}"><div class="g">${s.icon}</div>${s.name}<br><span style="color:#9ab">${save.stones.includes(s.id) ? 'Collected' : s.how}</span></div>`).join('')}</div>
+      <div class="body"><div class="grid">${ITEMS.map(i => `<div class="slot ${save.items.includes(i.id) ? '' : 'locked'} ${i.id === invSel ? 'sel' : ''}" data-id="${i.id}" title="${i.name}">${ico(i.icon)}${save.items.includes(i.id) ? '' : (i.reward ? '' : `<span class="cost">${i.cost}</span>`)}</div>`).join('')}</div>
+      <div class="detail"><div class="ic">${ico(it.icon)}</div><h4>${it.name}</h4><p>${it.desc}</p>${own ? '<p style="color:#7dff8f">✔ In your inventory</p>' : it.reward ? '<p style="color:#9ab">Reward: chat with the Great Deku Tree on the home page.</p>' : `<button class="btn" id="iB" ${save.rupees < it.cost ? 'disabled' : ''}>Buy — ${it.cost} rupees</button><p style="font-size:.85rem;color:#9ab">Earn rupees by cutting grass along the bottom of any page.</p>`}</div></div>
+      <div class="quest">${STONES.map(s => `<div class="qi ${save.stones.includes(s.id) ? 'got' : ''}"><div class="g">${ico(s.icon)}</div>${s.name}<br><span style="color:#9ab">${save.stones.includes(s.id) ? 'Collected' : s.how}</span></div>`).join('')}</div>
       <div class="songs">Songs played: ${save.songs.length}/${SONGS.length} · Pages visited: ${save.pages.length} · Grass cut: ${save.cuts}</div>
       <div class="bar"><button class="btn" id="iM">To Map</button> <button class="btn" id="iX">Export</button> <button class="btn" id="iI">Import</button> <span style="margin-left:10px"><span class="gem" style="display:inline-block;width:12px;height:18px;background:#2fcf50;clip-path:polygon(50% 0,100% 30%,100% 70%,50% 100%,0 70%,0 30%);vertical-align:-3px"></span> ${save.rupees}</span></div>
     </div>`;
@@ -587,10 +618,10 @@
     let sel = 'fairyocarina';
     function draw() {
       const hearts = 10;
-      host.innerHTML = `<div class="pl"><div class="pl-side l"><div class="eq">🗡️</div><div class="eq">🛡️</div><div class="eq">👕</div><div class="eq">🥾</div></div>
+      host.innerHTML = `<div class="pl"><div class="pl-side l"><div class="eq">${ICONS.mastersword}</div><div class="eq">${ICONS.mirror}</div><div class="eq">${ICONS.tunic}</div><div class="eq">${ICONS.boots}</div></div>
         <div class="pl-main"><div class="pl-top"><div class="pl-hearts">${Array.from({ length: hearts }, () => `<span>${heartSvg(1)}</span>`).join('')}</div><div class="pl-bar"></div><div class="pl-btns"><b class="r">Return</b><b class="g">Save</b><b class="d">Decide</b></div></div>
         <div class="pl-title">SELECT ITEM</div>
-        <div class="pl-grid">${cells.map(c => `<div class="pl-slot ${c.id === sel ? 'sel' : ''}" data-id="${c.id}" title="${c.name}">${c.icon}${c.cost && !c.own ? `<i>${c.cost}</i>` : ''}</div>`).join('')}</div>
+        <div class="pl-grid">${cells.map(c => `<div class="pl-slot ${c.id === sel ? 'sel' : ''}" data-id="${c.id}" title="${c.name}">${ico(c.icon)}${c.cost && !c.own ? `<i>${c.cost}</i>` : ''}</div>`).join('')}</div>
         <div class="pl-map">To Map</div><div class="pl-rup"><span class="gem"></span>500</div></div>
         <div class="pl-side r"><div class="pl-page"><b>Map</b><span></span><span></span><span></span><span></span></div></div></div>`;
       $$('.pl-slot', host).forEach(e => e.onclick = () => { sel = e.dataset.id; const c = cells.find(x => x.id === sel); sfx.open(); draw(); say(c.desc, c.name); });
