@@ -175,7 +175,7 @@
     const txt = $('.txt', dlg), ch = $('.choices', dlg), nx = $('.next', dlg);
     ch.innerHTML = '';
     if (!dq.length) { closeDlg(); return; }
-    const line = dq.shift(); dFull = line; $('.who', dlg).textContent = dWho; txt.textContent = ''; dBusy = true; nx.style.display = 'none';
+    const line = dq.shift(); dFull = line; $('.who', dlg).textContent = dWho; document.body.classList.toggle('deku-talk', dWho === 'Great Deku Tree'); txt.textContent = ''; dBusy = true; nx.style.display = 'none';
     let i = 0;
     dTimer = setInterval(() => {
       txt.textContent = dFull.slice(0, ++i); if (i % 3 === 0) sfx.text();
@@ -183,14 +183,14 @@
     }, 22);
   }
   function finishLine() {
-    clearInterval(dTimer); dBusy = false; $('.txt', dlg).textContent = dFull;
+    clearInterval(dTimer); dBusy = false; document.body.classList.remove('deku-talk'); $('.txt', dlg).textContent = dFull;
     if (!dq.length && dChoices) {
       const ch = $('.choices', dlg); ch.innerHTML = ''; $('.next', dlg).style.display = 'none';
       dChoices.forEach(c => { const b = el('button', null, c.label, ch); b.onclick = e => { e.stopPropagation(); const cb = c.fn; dChoices = null; closeDlg(true); cb && cb(); }; });
     } else $('.next', dlg).style.display = '';
   }
   function closeDlg(skipDone) {
-    clearInterval(dTimer); dlg.classList.remove('on'); dq = []; dChoices = null;
+    clearInterval(dTimer); dlg.classList.remove('on'); dq = []; dChoices = null; document.body.classList.remove('deku-talk');
     const d = dDone; dDone = null; if (!skipDone && d) d();
   }
   dlg.addEventListener('click', () => { if (dBusy) { finishLine(); } else if (!dChoices || dq.length) nextLine(); });
@@ -206,6 +206,7 @@
   /* ================= ITEMS / INVENTORY ================= */
   const ITEMS = [
     { id: 'sword', icon: '🗡️', name: 'Kokiri Sword', cost: 0, desc: "A small sword from the Kokiri Forest shop. Light enough for a child, and Link's first real weapon." },
+    { id: 'dekustick', icon: '🪵', name: 'Deku Stick', cost: 0, reward: true, desc: 'A sturdy stick that burns brightly when lit. A gift from the Great Deku Tree.' },
     { id: 'shield', icon: '🛡️', name: 'Deku Shield', cost: 0, desc: 'A wooden shield. Sturdy against rocks, but it burns, so keep it away from fire.' },
     { id: 'fairyocarina', icon: '🎵', name: 'Fairy Ocarina', cost: 0, desc: "A gift from Saria. Play songs on the Ocarina page to see what they do." },
     { id: 'slingshot', icon: '🎯', name: 'Fairy Slingshot', cost: 30, desc: 'Fires Deku Seeds. Great for hitting far-off switches and annoying Skulltulas.' },
@@ -242,8 +243,8 @@
     inv.innerHTML = `<div class="frame">
       <div class="top"><div class="hearts" id="invh"></div><div><button class="btn" id="iR">Return</button> <button class="btn" id="iS">Save</button></div></div>
       <h3>SELECT ITEM</h3>
-      <div class="body"><div class="grid">${ITEMS.map(i => `<div class="slot ${save.items.includes(i.id) ? '' : 'locked'} ${i.id === invSel ? 'sel' : ''}" data-id="${i.id}" title="${i.name}">${i.icon}${save.items.includes(i.id) ? '' : `<span class="cost">${i.cost}</span>`}</div>`).join('')}</div>
-      <div class="detail"><div class="ic">${it.icon}</div><h4>${it.name}</h4><p>${it.desc}</p>${own ? '<p style="color:#7dff8f">✔ In your inventory</p>' : `<button class="btn" id="iB" ${save.rupees < it.cost ? 'disabled' : ''}>Buy — ${it.cost} rupees</button><p style="font-size:.85rem;color:#9ab">Earn rupees by cutting grass along the bottom of any page.</p>`}</div></div>
+      <div class="body"><div class="grid">${ITEMS.map(i => `<div class="slot ${save.items.includes(i.id) ? '' : 'locked'} ${i.id === invSel ? 'sel' : ''}" data-id="${i.id}" title="${i.name}">${i.icon}${save.items.includes(i.id) ? '' : (i.reward ? '' : `<span class="cost">${i.cost}</span>`)}</div>`).join('')}</div>
+      <div class="detail"><div class="ic">${it.icon}</div><h4>${it.name}</h4><p>${it.desc}</p>${own ? '<p style="color:#7dff8f">✔ In your inventory</p>' : it.reward ? '<p style="color:#9ab">Reward: chat with the Great Deku Tree on the home page.</p>' : `<button class="btn" id="iB" ${save.rupees < it.cost ? 'disabled' : ''}>Buy — ${it.cost} rupees</button><p style="font-size:.85rem;color:#9ab">Earn rupees by cutting grass along the bottom of any page.</p>`}</div></div>
       <div class="quest">${STONES.map(s => `<div class="qi ${save.stones.includes(s.id) ? 'got' : ''}"><div class="g">${s.icon}</div>${s.name}<br><span style="color:#9ab">${save.stones.includes(s.id) ? 'Collected' : s.how}</span></div>`).join('')}</div>
       <div class="songs">Songs played: ${save.songs.length}/${SONGS.length} · Pages visited: ${save.pages.length} · Grass cut: ${save.cuts}</div>
       <div class="bar"><button class="btn" id="iM">To Map</button> <button class="btn" id="iX">Export</button> <button class="btn" id="iI">Import</button> <span style="margin-left:10px"><span class="gem" style="display:inline-block;width:12px;height:18px;background:#2fcf50;clip-path:polygon(50% 0,100% 30%,100% 70%,50% 100%,0 70%,0 30%);vertical-align:-3px"></span> ${save.rupees}</span></div>
@@ -503,22 +504,79 @@
   /* ================= DEKU TREE ================= */
   (function () {
     const host = $('#deku-host'); if (!host) return;
-    host.innerHTML = `<svg id="deku" viewBox="0 0 300 300"><defs><radialGradient id="dg" cx="50%" cy="40%"><stop offset="0" stop-color="#7a5a35"/><stop offset="1" stop-color="#3a2614"/></radialGradient></defs>
-      <g class="sway"><path d="M60 300 Q80 170 90 110 Q30 80 50 30 Q100 60 150 40 Q200 60 250 30 Q270 80 210 110 Q220 170 240 300Z" fill="url(#dg)" stroke="#1d1209" stroke-width="3"/>
-      <path d="M40 40 Q70 -5 150 15 Q230 -5 262 40 Q200 70 150 55 Q100 70 40 40Z" fill="#2f7a30" stroke="#1d5a1f" stroke-width="3"/>
-      <g class="eyebrow"><path d="M85 120 Q115 98 140 122" stroke="#1d1209" stroke-width="9" fill="none" stroke-linecap="round"/><path d="M160 122 Q185 98 215 120" stroke="#1d1209" stroke-width="9" fill="none" stroke-linecap="round"/></g>
-      <ellipse cx="112" cy="140" rx="17" ry="12" fill="#f5e9c8"/><ellipse cx="188" cy="140" rx="17" ry="12" fill="#f5e9c8"/>
-      <circle id="pl" cx="112" cy="140" r="6" fill="#111"/><circle id="pr" cx="188" cy="140" r="6" fill="#111"/>
-      <path d="M115 210 Q150 190 185 210 Q150 258 115 210Z" fill="#1a0d06"/><path d="M120 215 Q150 235 180 215" fill="none" stroke="#7a4a2a" stroke-width="3"/></g></svg>`;
-    const pl = $('#pl'), pr = $('#pr');
+    save.deku = Object.assign({ t: 0, b: 0, stick: false, bloom: false }, save.deku || {});
+    const leafCircles = [[105, 95, 58], [200, 62, 74], [295, 95, 58], [150, 42, 52], [250, 42, 52], [60, 130, 40], [340, 130, 40]];
+    const roots = 'M95 410 C60 415 40 425 10 420 C45 405 70 395 95 380Z M305 410 C340 415 360 425 390 420 C355 405 330 395 305 380Z M140 415 C130 430 120 438 95 440 C120 425 130 415 140 395Z M260 415 C270 430 280 438 305 440 C280 425 270 415 260 395Z';
+    host.innerHTML = `<div class="dekuwrap"><svg id="deku" viewBox="0 0 400 450" role="img" aria-label="The Great Deku Tree. Click to talk.">
+      <defs>
+        <linearGradient id="bark" x1="0" x2="1"><stop offset="0" stop-color="#3a2614"/><stop offset=".35" stop-color="#7a5a35"/><stop offset=".65" stop-color="#6a4a28"/><stop offset="1" stop-color="#2f1d0e"/></linearGradient>
+        <radialGradient id="eyeglow"><stop offset="0" stop-color="#fff7b0"/><stop offset="1" stop-color="#fff7b000"/></radialGradient>
+        <filter id="barkfx"><feTurbulence baseFrequency=".04 .25" numOctaves="2" seed="4"/><feColorMatrix values="0 0 0 0 .1  0 0 0 0 .06  0 0 0 0 .02  0 0 0 .6 0"/><feComposite in2="SourceGraphic" operator="in"/></filter>
+      </defs>
+      <g id="kokiri"><g class="orbit o1"><circle cx="375" cy="230" r="5" fill="#d7ffa0"/></g><g class="orbit o2"><circle cx="345" cy="230" r="4" fill="#9fe0ff"/></g><g class="orbit o3"><circle cx="385" cy="230" r="4" fill="#ffd0f0"/></g></g>
+      <g class="tsway">
+        <path d="${roots}" fill="#3a2614" stroke="#1d1209" stroke-width="3"/>
+        <g id="leaves">${leafCircles.map((c, i) => `<circle class="lf${i % 2}" cx="${c[0]}" cy="${c[1]}" r="${c[2]}"/>`).join('')}</g>
+        <path id="trunk" d="M92 418 C104 335 110 285 120 232 C58 202 62 125 100 98 L300 98 C340 125 342 202 280 232 C290 285 296 335 308 418Z" fill="url(#bark)" stroke="#1d1209" stroke-width="4"/>
+        <path d="M92 418 C104 335 110 285 120 232 C58 202 62 125 100 98 L300 98 C340 125 342 202 280 232 C290 285 296 335 308 418Z" filter="url(#barkfx)"/>
+        <g stroke="#1d1209" stroke-width="3" fill="none" opacity=".55" stroke-linecap="round"><path d="M130 110 Q120 160 130 215"/><path d="M270 110 Q282 160 270 215"/><path d="M150 300 Q140 350 150 410"/><path d="M250 300 Q262 350 252 410"/><path d="M200 105 Q196 130 202 150"/></g>
+        <ellipse class="moss" cx="140" cy="118" rx="28" ry="9"/><ellipse class="moss" cx="270" cy="124" rx="22" ry="8"/><ellipse class="moss" cx="120" cy="360" rx="14" ry="26"/>
+        <g class="eyeunit" id="eyeL"><ellipse cx="150" cy="190" rx="26" ry="16" fill="url(#eyeglow)" class="glow"/><ellipse cx="150" cy="190" rx="21" ry="14" fill="#f5e9c8" stroke="#1d1209" stroke-width="2"/><circle class="pupil" cx="150" cy="190" r="7" fill="#150c05"/><ellipse class="lid" cx="150" cy="190" rx="24" ry="17" fill="#6a4a28" stroke="#1d1209" stroke-width="3"/></g>
+        <g class="eyeunit" id="eyeR"><ellipse cx="250" cy="190" rx="26" ry="16" fill="url(#eyeglow)" class="glow"/><ellipse cx="250" cy="190" rx="21" ry="14" fill="#f5e9c8" stroke="#1d1209" stroke-width="2"/><circle class="pupil" cx="250" cy="190" r="7" fill="#150c05"/><ellipse class="lid" cx="250" cy="190" rx="24" ry="17" fill="#6a4a28" stroke="#1d1209" stroke-width="3"/></g>
+        <g id="brows" fill="#4a3018" stroke="#1d1209" stroke-width="3"><path d="M106 178 Q150 138 192 172 L188 190 Q150 160 112 194Z"/><path d="M294 178 Q250 138 208 172 L212 190 Q250 160 288 194Z"/></g>
+        <path d="M184 196 Q200 262 216 196 Q200 214 184 196Z" fill="#6a4a28" stroke="#1d1209" stroke-width="3"/>
+        <ellipse id="mouth" cx="200" cy="300" rx="42" ry="22" fill="#120904" stroke="#1d1209" stroke-width="3"/>
+        <ellipse id="tongue" cx="200" cy="312" rx="20" ry="7" fill="#7a2a2a"/>
+        <g id="stache"><path d="M96 262 Q150 232 200 268 Q250 232 304 262 Q292 308 250 298 Q222 288 200 304 Q178 288 150 298 Q108 308 96 262Z" fill="#a89a5e" stroke="#4a3d1a" stroke-width="3"/>
+          <g stroke="#7a6a3a" stroke-width="3" fill="none" stroke-linecap="round" opacity=".8"><path d="M120 270 Q150 262 180 280"/><path d="M280 270 Q250 262 220 280"/><path d="M130 285 Q155 282 175 292"/><path d="M270 285 Q245 282 225 292"/></g></g>
+        <g id="beard" stroke="#8a7a45" stroke-width="7" fill="none" stroke-linecap="round"><path d="M130 296 Q122 340 138 374"/><path d="M165 300 Q160 350 172 392"/><path d="M200 306 Q200 360 196 406"/><path d="M235 300 Q242 350 228 392"/><path d="M270 296 Q280 340 262 374"/></g>
+        <g id="cobweb" opacity="0" stroke="#fff" stroke-width="1.5" fill="none"><path d="M100 100 L170 150 M100 100 L140 190 M100 100 L190 110 M120 106 Q135 135 150 140 M140 114 Q160 140 176 142"/><path d="M300 100 L230 150 M300 100 L260 190 M300 100 L210 110 M280 106 Q265 135 250 140"/></g>
+        <g id="sprouts"></g>
+      </g></svg>
+      <div class="dekubtns"><button class="btn" id="dkTalk">Speak to the Tree</button><button class="btn" id="dkNut">Offer a Deku Nut</button><button class="btn" id="dkWater">Water the Roots</button><button class="btn" id="dkTickle">Tickle the Leaves</button><button class="btn" id="dkCurse">Gohma's Curse</button></div></div>`;
+    const svgEl = $('#deku'), pl = $$('.pupil', svgEl), lids = $$('.lid', svgEl);
+    let awake = false, sleepT = 0, cursed = false, sprouts = 0;
+    function setAwake(v) { awake = v; svgEl.classList.toggle('open', v); clearTimeout(sleepT); if (v && !cursed) sleepT = setTimeout(() => setAwake(false), 7000); }
     addEventListener('mousemove', e => {
-      const r = $('#deku').getBoundingClientRect(), dx = (e.clientX - (r.left + r.width / 2)) / innerWidth * 14, dy = (e.clientY - (r.top + r.height * .45)) / innerHeight * 10;
-      pl.setAttribute('cx', 112 + dx); pl.setAttribute('cy', 140 + dy); pr.setAttribute('cx', 188 + dx); pr.setAttribute('cy', 140 + dy);
+      const r = svgEl.getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height * .45, d = Math.hypot(e.clientX - cx, e.clientY - cy);
+      if (d < 420 && !awake && !cursed) setAwake(true); else if (awake && !cursed) { clearTimeout(sleepT); sleepT = setTimeout(() => setAwake(false), 6000); }
+      const dx = Math.max(-1, Math.min(1, (e.clientX - cx) / 300)) * 6, dy = Math.max(-1, Math.min(1, (e.clientY - cy) / 300)) * 4;
+      pl.forEach((p, i) => { p.setAttribute('transform', `translate(${dx} ${dy})`); });
     });
-    $('#deku').onclick = () => {
-      sfx.open();
-      say(["Ohhh... Link... Welcome, young traveler.", "I am the Great Deku Tree, guardian spirit of the Kokiri Forest.", "A wicked man has cursed me. Hyrule needs a hero.", "Take your inventory with the I key, and cut some grass. A hero must keep his wallet fat."], 'Great Deku Tree', () => { spark(innerWidth / 2, innerHeight / 2, '#59c24c', 30, 5); checkStones(); });
+    setInterval(() => { if (awake) { svgEl.classList.remove('open'); setTimeout(() => awake && svgEl.classList.add('open'), 140); } }, 3600);
+    svgEl.addEventListener('mouseenter', () => { if (!cursed) { setAwake(true); leafShower(6); sfx.chirp(); } });
+    function leafShower(n, brown) {
+      const r = svgEl.getBoundingClientRect();
+      for (let i = 0; i < n; i++) setTimeout(() => parts.push({ x: r.left + rand(.15, .85) * r.width, y: r.top + rand(0, .22) * r.height, vx: rand(-1, 1), vy: rand(.8, 2), life: 140, max: 140, glyph: brown || cursed ? '🍂' : '🍃', c: '#6c6', g: .01 }), i * 70);
+    }
+    const bump = () => { save.deku.t++; persist(); if (save.deku.t >= 3 && !save.deku.stick) { save.deku.stick = true; if (!save.items.includes('dekustick')) save.items.push('dekustick'); persist(); drawHUD(); setTimeout(() => itemGet('🪵', 'a Deku Stick', 'The Great Deku Tree rewards friendly visitors. Check your inventory!'), 1800); } };
+    const talk = (lines, done) => { if (!cursed) setAwake(true); say(lines, 'Great Deku Tree', () => { done && done(); checkStones(); }); };
+    const STORY = [
+      ['Ohhh... Link... Welcome, young traveler.', 'I am the Great Deku Tree, guardian spirit of the Kokiri Forest.'],
+      ['A wicked man of the desert has cursed me... I do not have long.', 'Hyrule needs a hero. It needs someone with courage. It needs you.'],
+      ['Go to Hyrule Castle. Seek the Princess. Take the Spiritual Stone I will give you.', 'And remember: cut grass, find Skulltulas, and keep your wallet fat.']
+    ];
+    $('#dkTalk').onclick = () => { talk(STORY[save.deku.t % 3], bump); };
+    svgEl.onclick = e => { if (e.target.closest('.dekubtns')) return; sfx.open(); $('#dkTalk').click(); };
+    $('#dkNut').onclick = () => { setAwake(true); flash(); sfx.big(); spark(innerWidth / 2, svgEl.getBoundingClientRect().top + 200, '#fff', 40, 7); talk(['Ohh! A Deku Nut! How thoughtful, child.', 'It tickles... heh... hah... Ahh... AH-CHOO!'], () => { leafShower(20); gainRupees('blue', innerWidth / 2, 300); bump(); }); };
+    $('#dkWater').onclick = () => {
+      if (cursed) return say('The tree is too weak for flowers. Lift the curse first.', 'Navi');
+      if (sprouts >= 8) return talk(['The roots are in full bloom. Thank you!']);
+      sprouts++; const g = $('#sprouts'), x = 30 + sprouts * 40 + rand(-8, 8);
+      const sp = svg('g', { class: 'sprout', transform: `translate(${x} 432)` }, g);
+      svg('path', { d: 'M0 0 Q-2 -14 0 -24', stroke: '#3f9a3a', 'stroke-width': 3, fill: 'none' }, sp);
+      svg('path', { d: 'M0 -12 Q-14 -18 -16 -8 Q-6 -6 0 -12Z', fill: '#59c24c' }, sp);
+      svg('circle', { cy: -26, r: 6, fill: pick(['#ff7aa8', '#ffe45a', '#fff', '#b05cff']) }, sp);
+      sfx.heart(); spark(svgEl.getBoundingClientRect().left + x * svgEl.getBoundingClientRect().width / 400, svgEl.getBoundingClientRect().bottom - 20, '#6cf', 10, 2, 30, .1);
+      if (sprouts === 8 && !save.deku.bloom) { save.deku.bloom = true; save.pieces++; persist(); drawHUD(); toast('The roots bloom! Piece of Heart ♥'); }
     };
+    $('#dkTickle').onclick = () => { leafShower(30); sfx.rupee(); setAwake(true); svgEl.classList.add('shake'); setTimeout(() => svgEl.classList.remove('shake'), 700); if (Math.random() < .5) gainRupees('green', innerWidth / 2, svgEl.getBoundingClientRect().top + 60); };
+    $('#dkCurse').onclick = e => {
+      cursed = !cursed; svgEl.classList.toggle('cursed', cursed); e.target.textContent = cursed ? 'Lift the Curse' : "Gohma's Curse";
+      if (cursed) { setAwake(false); clearTimeout(sleepT); leafShower(24, true); sfx.bad(); $('#cobweb').setAttribute('opacity', 1); say('...Link... the curse... grows stronger...', 'Great Deku Tree'); }
+      else { $('#cobweb').setAttribute('opacity', 0); setAwake(true); leafShower(30); sfx.item(); spark(innerWidth / 2, svgEl.getBoundingClientRect().top + 200, '#9f9', 60, 7, 70); talk(['The curse... is lifted! You have done well, child.']); }
+    };
+    setInterval(() => { if (awake && !cursed && Math.random() < .5) leafShower(1); }, 2500);
   })();
 
   /* ================= TRIVIA ================= */

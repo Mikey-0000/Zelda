@@ -384,3 +384,38 @@ main { animation: unfold .7s ease-out; }
 .navbar .nav-list a { color: var(--ivory); text-decoration: none; }
 .navbar .nav-list a:hover, .navbar .nav-list a.here { color: #1a1208; }
 .nav-list li { background: none; }
+
+/* ---------- Great Deku Tree (animated) ---------- */
+.dekuwrap { text-align: center; margin: 10px auto 0; }
+#deku { width: min(440px, 92%); cursor: pointer; overflow: visible; filter: drop-shadow(0 14px 18px #000a); transition: filter .6s; }
+#deku .tsway { transform-origin: 50% 100%; animation: sway 7s ease-in-out infinite alternate; }
+#deku .lf0 { fill: #2f7a30; stroke: #1d5a1f; stroke-width: 3; } #deku .lf1 { fill: #3f9a3a; stroke: #1d5a1f; stroke-width: 3; }
+#deku #leaves { transform-origin: 50% 80%; animation: leafwave 4s ease-in-out infinite alternate; }
+@keyframes leafwave { to { transform: scale(1.02) rotate(.6deg); } }
+#deku .moss { fill: #5a8a3a; opacity: .85; }
+#deku .lid { transform-box: fill-box; transform-origin: 50% 0; transition: transform .22s ease-out; transform: scaleY(1); }
+#deku.open .lid { transform: scaleY(.04); }
+#deku .glow { opacity: 0; transition: opacity 1s; }
+body.night #deku.open .glow { opacity: .9; }
+#deku #mouth { transform-box: fill-box; transform-origin: 50% 20%; transform: scaleY(.18); transition: transform .2s; }
+#deku:hover #mouth, #deku.open #mouth { transform: scaleY(.3); }
+#deku #tongue { opacity: 0; } body.deku-talk #deku #tongue { opacity: 1; }
+body.deku-talk #deku #mouth { animation: talkm .22s ease-in-out infinite alternate; }
+@keyframes talkm { from { transform: scaleY(.25); } to { transform: scaleY(1); } }
+body.deku-talk #deku #beard, body.deku-talk #deku #stache { animation: jiggle .22s ease-in-out infinite alternate; transform-box: fill-box; transform-origin: 50% 0; }
+@keyframes jiggle { to { transform: translateY(2px) scaleY(1.02); } }
+#deku #beard { transform-box: fill-box; transform-origin: 50% 0; animation: beardsway 5s ease-in-out infinite alternate; }
+@keyframes beardsway { from { transform: skewX(-2deg); } to { transform: skewX(2deg); } }
+#deku .orbit { transform-box: view-box; animation: orb 7s linear infinite; }
+#deku .orbit circle { filter: drop-shadow(0 0 6px currentColor); }
+#deku .orbit.o1 { animation-duration: 6s; } #deku .orbit.o2 { animation-duration: 9s; animation-direction: reverse; } #deku .orbit.o3 { animation-duration: 11s; }
+@keyframes orb { to { transform: rotate(360deg); } }
+#deku .orbit { transform-origin: 200px 230px; }
+#deku .sprout { transform-box: fill-box; transform-origin: 50% 100%; animation: grow .8s cubic-bezier(.2, 1.5, .4, 1); }
+@keyframes grow { from { transform: scale(0); } }
+#deku.shake { animation: shake .7s; } @keyframes shake { 20% { transform: rotate(-2deg); } 40% { transform: rotate(2deg); } 60% { transform: rotate(-1.5deg); } 80% { transform: rotate(1deg); } }
+#deku.cursed { filter: grayscale(.85) brightness(.55) contrast(1.1) drop-shadow(0 14px 18px #000a); }
+#deku.cursed .lf0, #deku.cursed .lf1 { fill: #6a5a2a; stroke: #3a2f10; }
+#deku.cursed #cobweb { opacity: 1; }
+#deku.cursed .tsway { animation-duration: 12s; }
+.dekubtns { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 12px; }
