@@ -10,7 +10,7 @@ Static site: everything lives in `public/`. Open `public/index.html` in a browse
 
 **Workers (CLI):** `npx wrangler deploy` (uses `wrangler.jsonc`, serves `public/` as static assets).
 
-**Pages (CLI):** `npx wrangler pages deploy public --project-name zelda-encyclopedia`
+**Pages (CLI):** `npx wrangler pages deploy public --project-name zelda`
 
 `public/_headers` sets security and cache headers; `public/404.html` is the not-found page. `tools/build_pages.py` regenerates the HTML pages (optional).
 
