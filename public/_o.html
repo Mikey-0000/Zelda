@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Navi - The Fairy Companion</title>
+    <link rel="stylesheet" href="style.css?v=8">
+</head>
+<body data-theme="navi">
+    <main class="page">
+        <nav class="navbar"><ul class="nav-list"><li><a href="index.html">Home</a></li><li><a href="Ocarina.html">Ocarina</a></li><li><a href="Zelda.html">Zelda</a></li><li><a href="Link.html">Link</a></li><li><a href="Navi.html">Navi</a></li><li><a href="Majoria.html">Majora's Mask</a></li><li><a href="Twilight.html">Twilight Princess</a></li><li><a href="Skyward.html">Skyward Sword</a></li><li><a href="Wild.html">Breath of the Wild</a></li><li><a href="Ganondorf.html">Ganondorf</a></li></ul></nav>
+        <h1>Navi - The Fairy Companion</h1>
+        <svg class="ornament" viewBox="0 0 480 28"><g fill="none" stroke="#b8860b" stroke-width="2"><path d="M10 14 H200 M280 14 H470"/><path d="M200 14 Q215 2 230 14 Q215 26 200 14Z M250 14 Q265 2 280 14 Q265 26 250 14Z"/></g><path d="M240 2 L252 22 H228Z" fill="#f4c542" stroke="#7a5a2a"/></svg>
+        <svg class="tri" style="width:120px" viewBox="0 0 120 120" role="img" aria-label="Navi"><defs><radialGradient id="ng"><stop offset="0" stop-color="#fff"/><stop offset=".4" stop-color="#9fe0ff"/><stop offset="1" stop-color="#9fe0ff00"/></radialGradient></defs><circle cx="60" cy="60" r="50" fill="url(#ng)"/><path d="M60 60 C20 20 10 60 40 70Z" fill="#ffffffaa"/><path d="M60 60 C100 20 110 60 80 70Z" fill="#ffffffaa"/><circle cx="60" cy="60" r="9" fill="#fff"/></svg>
+
+        <p>Navi is the fairy companion of Link in The Legend of Zelda: Ocarina of Time. Sent by the Great Deku Tree to the boy who had no fairy, she becomes his guide, offering hints and advice on how to progress. Her catchphrase, "Hey! Listen!", has become part of the game's legacy.</p>
+
+        <h2>How Navi Helps</h2>
+        <ul>
+            <li>She glows blue as she flutters beside Link, and turns yellow when something nearby has caught her attention.</li>
+            <li>She powers Z-targeting: lock onto an enemy or a person and Link keeps them in view.</li>
+            <li>She offers hints about enemies, puzzles and where to go next.</li>
+            <li>At the end of the adventure, she says goodbye to Link and flies away.</li>
+        </ul>
+
+        <h2>Other Zelda Companions</h2>
+        <ul>
+            <li>Tatl, the fairy who joins Link in <a href="Majoria.html">Majora's Mask</a>.</li>
+            <li>Midna, who helps Link in <a href="Twilight.html">Twilight Princess</a>.</li>
+            <li>Fi, the spirit of the sword in <a href="Skyward.html">Skyward Sword</a>.</li>
+        </ul>
+
+        <p style="text-align:center">The glowing fairy following your cursor is Navi too. Click her for a hint.<br><button class="btn" data-say="Hey! Listen!|Hey! Listen!|...Hey! Listen!" data-who="Navi">Hey!</button></p>
+
+    </main>
+    <script src="script.js?v=8"></script>
+<script>setTimeout(()=>{const W=innerWidth;const bad=[];document.querySelectorAll("main *, .topbar *").forEach(e=>{const r=e.getBoundingClientRect();if(r.width>0&&(r.right>W+1||r.left<-1)&&!e.closest(".nav-list,.tl,.tuft,#grass,svg")&&getComputedStyle(e).position!="fixed")bad.push(e.tagName+"."+e.className+":"+Math.round(r.left)+"-"+Math.round(r.right))});document.title="W"+W+" sw"+document.documentElement.scrollWidth+" bad="+bad.slice(0,6).join("|")},800)</script></body>
+</html>

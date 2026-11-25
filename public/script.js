@@ -89,9 +89,10 @@
   const heartsBox = el('div', 'hearts', null, top);
   const stats = el('div', 'hud-stats', null, top);
   const btns = el('div', 'hud-btns', null, top);
-  const bInv = el('button', 'btn', '🎒 Items (I)', btns);
-  const bDay = el('button', 'btn', '☀ / ☾', btns);
+  const bInv = el('button', 'btn', '🎒<span class="lbl"> Items (I)</span>', btns);
+  const bDay = el('button', 'btn', '☀<span class="lbl"> / ☾</span>', btns);
   const bSnd = el('button', 'btn', '🔊', btns);
+  bInv.setAttribute('aria-label', 'Inventory'); bDay.setAttribute('aria-label', 'Day or night'); bSnd.setAttribute('aria-label', 'Sound');
   bInv.onclick = () => openInv();
   bDay.onclick = () => toggleNight();
   bSnd.onclick = () => { save.mute = !save.mute; persist(); drawHUD(); };
@@ -120,7 +121,7 @@
   }
   function rainDrop() { parts.push({ x: rand(0, innerWidth), y: -10, vx: -1, vy: rand(14, 22), life: 120, max: 120, c: '#a9d3ff', r: 1, g: 0, rain: true }); }
   const flies = [];
-  for (let i = 0; i < 22; i++) flies.push({ x: rand(0, innerWidth), y: rand(innerHeight * .3, innerHeight), a: rand(0, 6.28), s: rand(.2, .6), p: rand(0, 6) });
+  for (let i = 0; i < (innerWidth < 640 ? 9 : 22); i++) flies.push({ x: rand(0, innerWidth), y: rand(innerHeight * .3, innerHeight), a: rand(0, 6.28), s: rand(.2, .6), p: rand(0, 6) });
   let raining = 0, thunderT = 0;
   function loop(t) {
     fctx.clearRect(0, 0, fx.width, fx.height);
@@ -341,7 +342,7 @@
   /* ================= TREES (parallax) ================= */
   function buildTrees() {
     treesBox.innerHTML = '';
-    const layers = [{ n: 7, h: 340, c1: '#0e2a1a', c2: '#133a24', sp: .06 }, { n: 5, h: 260, c1: '#0a1f13', c2: '#0f2f1b', sp: .12 }, { n: 4, h: 200, c1: '#06150c', c2: '#0a2314', sp: .2 }];
+    const lite = innerWidth < 640; const layers = [{ n: lite ? 4 : 7, h: 340, c1: '#0e2a1a', c2: '#133a24', sp: .06 }, { n: 5, h: 260, c1: '#0a1f13', c2: '#0f2f1b', sp: .12 }, { n: 4, h: 200, c1: '#06150c', c2: '#0a2314', sp: .2 }];
     layers.forEach((L, li) => {
       const s = svg('svg', { viewBox: `0 0 1200 ${L.h}`, preserveAspectRatio: 'xMidYMax slice', style: `height:${L.h}px;bottom:${li * -10}px` }, null);
       s.dataset.sp = L.sp; treesBox.appendChild(s);
@@ -407,6 +408,7 @@
   const mouse = { x: innerWidth / 2, y: innerHeight / 2 };
   const nv = { x: -50, y: -50, t: 0, rest: 0 };
   addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; nv.rest = 0; }, { passive: true });
+  addEventListener('pointerdown', e => { mouse.x = e.clientX; mouse.y = e.clientY; }, { passive: true });
   addEventListener('touchmove', e => { const t = e.touches[0]; mouse.x = t.clientX; mouse.y = t.clientY; }, { passive: true });
   function naviLoop() {
     nv.t += .05;
@@ -440,7 +442,9 @@
 
   /* ================= Z-TARGET ================= */
   const zt = el('div', null, '<i></i><i></i><i></i><i></i>', document.body); zt.id = 'ztarget';
+  const COARSE = matchMedia('(pointer: coarse)').matches;
   document.addEventListener('mouseover', e => {
+    if (COARSE) return;
     const t = e.target.closest && e.target.closest('a, .g, .song, .btn, .card, .tuft, .skull, #deku, .tri, .mask');
     if (!t) return;
     const r = t.getBoundingClientRect();
@@ -492,7 +496,7 @@
   (function ocarinaUI() {
     const box = $('#ocarina-ui'); if (!box) return;
     box.innerHTML = `<div class="staff"></div><div class="pad"><button class="cl" data-k="L">◀</button><div style="display:flex;flex-direction:column;gap:8px"><button class="cu" data-k="U">▲</button><button class="cd" data-k="D">▼</button></div><button class="cr" data-k="R">▶</button><button class="a" data-k="A">A</button></div><p style="text-align:center;font-size:.95rem">Keys: ← ↑ ↓ → and <b>A</b> / Space. Click a song below to hear it.</p><div class="songbook">${SONGS.map(s => `<div class="song ${save.songs.includes(s.id) ? 'known' : ''}" data-id="${s.id}"><h4>${s.name}</h4><div class="seq">${[...s.seq].map(k => N[k][0]).join(' ')}</div><small>${s.note}</small></div>`).join('')}</div>`;
-    $$('.pad button', box).forEach(b => { b.onmousedown = () => playNote(b.dataset.k); });
+    $$('.pad button', box).forEach(b => { b.addEventListener('pointerdown', e => { e.preventDefault(); playNote(b.dataset.k); b.classList.add('down'); }); ['pointerup', 'pointerleave', 'pointercancel'].forEach(t => b.addEventListener(t, () => b.classList.remove('down'))); });
     $$('.song', box).forEach(c => { c.onclick = () => autoplay(SONGS.find(s => s.id === c.dataset.id).seq); });
   })();
   const KEYMAP = { ArrowUp: 'U', ArrowDown: 'D', ArrowLeft: 'L', ArrowRight: 'R', a: 'A', A: 'A', ' ': 'A' };
