@@ -4,6 +4,8 @@ An interactive Zelda fan encyclopedia centred on Ocarina of Time, with pages for
 
 Static site: everything lives in `public/`. Open `public/index.html` in a browser (no build step).
 
+**Live:** https://mikey-0000.github.io/Zelda/ (published from `public/` by `.github/workflows/pages.yml`).
+
 ## Deploy to Cloudflare
 
 **Pages (dashboard):** Workers & Pages > Create > Pages > Connect to Git > pick this repo. Build command: *(leave empty)*. Build output directory: `public`.
